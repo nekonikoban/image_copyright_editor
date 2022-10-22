@@ -20,6 +20,8 @@ TODO:
 
 
 NOTE: 
-If you encounter problems with `pyinstaller` while building `tkinter`, try providing library path manually like
+If you encounter problems with `pyinstaller` while building `tkinter`, try providing library path manually like so
+
 `pyinstaller --onefile --noconfirm --onefile --windowed --add-data "C:/<paython_path>/tkinterDnD;tkinterDnD/" "<script.py>"`
-depending on which lib you use it could be either `tkinterDnD` or `tkinterdnd2` which in my case is the former. 
+
+depending on which lib you use it could be either `tkinterDnD` or `tkinterdnd2` which in this case is the former. 
