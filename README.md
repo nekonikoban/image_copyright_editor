@@ -17,6 +17,7 @@ TODO:
 1. Restrict files to images only
 2. Show updated images on the frame
 3. Reduce unnecessary imports
+4. Unusual UAC behaviour while running on earlier windows builds (Visual Redistribute C++ may be required?)
 
 
 NOTE: 
