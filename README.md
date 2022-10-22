@@ -1,5 +1,5 @@
 # image_copyright_editor
-This app is made specificaly to change metadata (copyright info) on a bulk of images.
+This app is made to change metadata (specifically copyright info) on a bulk of images.
 
 1. Drag and drop bulk images from a directory to a frame
 2. Enter the new copyright tag in the input below
