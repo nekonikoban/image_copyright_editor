@@ -20,6 +20,9 @@ TODO:
 4. Unusual UAC behaviour while running on earlier windows builds (Visual Redistribute C++ may be required?)
 
 
+
+
+
 NOTE: 
 If you encounter problems with `pyinstaller` while building `tkinter`, try providing library path manually like so
 
