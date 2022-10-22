@@ -17,3 +17,9 @@ TODO:
 1. Restrict files to images only
 2. Show updated images on the frame
 3. Reduce unnecessary imports
+
+
+NOTE: 
+If you encounter problems with `pyinstaller` while building `tkinter`, try providing library path manually like
+`pyinstaller --onefile --noconfirm --onefile --windowed --add-data "C:/<paython_path>/tkinterDnD;tkinterDnD/" "<script.py>"`
+depending on which lib you use it could be either `tkinterDnD` or `tkinterdnd2` which in my case is the former. 
