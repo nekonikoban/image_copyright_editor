@@ -8,7 +8,7 @@ from exif import Image #METADATA READER / WRITER
 # and to be able to use the main window as a dnd widget
 root = tkinterDnD.Tk()  
 root.title("Image EXIF (COPYRIGHT) Editor  __by AylinDesign®") #Trackbar title
-#root.iconbitmap("favicon.ico") #Trackbar / Taskbar icon
+root.iconbitmap("C:/favicon.ico") #Trackbar / Taskbar icon NOTE: copy to C root for it to work
 root.geometry(f"{750}x{450}") #Frame with static width and height
 root.resizable(False, False) #Frame unresizable by both width and height
 root.attributes('-topmost', True) #Frame always on top
@@ -64,6 +64,10 @@ def widgets():
     name_label.pack(fill="both", expand=True, padx=10, pady=1)
     name_entry = ttk.Entry(root,textvariable = copyright_value, font=('calibre', 15, 'normal'))
     name_entry.pack(fill="both", expand=True, padx=10, pady=10)
+
+    #CHECKBOX
+    #copyright_check = ttk.Checkbutton(root)
+    #copyright_check.pack(fill="both", expand=True, padx=10, pady=1)
 
     # Button that will call the submit function
     sub_btn=ttk.Button(root,text = 'Save', command=submit)   
@@ -125,3 +129,7 @@ def submit():
 widgets()
 #RUN `Tk`` LOOP
 root.mainloop()
+
+#NOTE: THE APP STOPS RESPONDING WHILE RUN ON AN DIFFERENT WINDOWS MACHINE
+#POSSIBLE SOLUTION: 
+# - Installing / Updating C++ Redistributable
