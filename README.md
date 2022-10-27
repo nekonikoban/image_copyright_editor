@@ -5,7 +5,7 @@ This app is made to change metadata (specifically copyright info) on a bulk of i
 2. Enter the new copyright tag in the input below
 3. Click `Save`
 
-The output will be saved in a newly created directory called `updated` with exact same copy of the images dragged to a program.
+The output will be saved in a newly created directory called `updated` with exact same copy of the images dragged to a program with new `copyright` tag.
 
 Packages used
 - `os` for directory reading & writing
