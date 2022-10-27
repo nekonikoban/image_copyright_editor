@@ -1,21 +1,32 @@
 import os #READING / WRITING DIRS
 import tkinter as tk
-from tkinter import ttk #GUI
+from tkinter import ttk
 import tkinterDnD  #DRAG & DROP
 from exif import Image #METADATA READER / WRITER
+
+MAIN_COLOR = "#2D2D2D"
+EXTERNAL_PATH = "/updated"
+EXTENSIONS = ['.jpg', '.jpeg', '.png', '.ttif']
 
 # You have to use the tkinterDnD.Tk object for super easy initialization,
 # and to be able to use the main window as a dnd widget
 root = tkinterDnD.Tk()  
-root.title("Image EXIF (COPYRIGHT) Editor  __by AylinDesign®") #Trackbar title
+root.title("Image COPYRIGHT Editor  __by AylinDesign®") #Trackbar title
 root.iconbitmap("C:/favicon.ico") #Trackbar / Taskbar icon NOTE: copy to C root for it to work
 root.geometry(f"{750}x{450}") #Frame with static width and height
 root.resizable(False, False) #Frame unresizable by both width and height
 root.attributes('-topmost', True) #Frame always on top
+root.configure(background=MAIN_COLOR, border=2)
 
-#Style NOTE: REMOVE THIS ONE. LOW PRIORITY, STYLING WITH `DnD` IS MEH
-style = ttk.Style()
-style.configure("BW.TLabel", foreground="white", background="transparent")
+#fonts = Font(file="C:/NovaCut.ttf", size=12)
+fonts = ('Helvetica', 12, 'bold')
+
+#Style NOTE: REMOVE THIS ONE. LOW PRIORITY, STYLING WITH `DnD` IS MEEH..
+tree_style = ttk.Style()
+tree_style.configure("BW.TLabel", background="#383838", font=fonts)
+
+button_style = ttk.Style()
+button_style.configure("BW.TButton", background="#383838", font=fonts)
 
 images_value = tk.StringVar()
 images_value.set('Drag & Drop')
@@ -30,16 +41,17 @@ path = "" #ABSOLUTE COMMON PATH FOR DROPPED FILES
 #DRAG & DROP EVENT, LIST ALL FILES PATHS ON THE TREEVIEW WHEN DRAGGED OVER
 def drop(event):
     data = event.data.split(" ")
-    images_value.set(data)  
-    load_dragged_images(data)
-    for image in data:
+    images = filter_images(data)
+    load_dragged_images(images)
+    images_value.set(images)  
+    for image in images:
         tree.insert('', tk.END, values=image)
 
 #DEFINING TREE AND ITS CULOMNS TO SHOW TEMPORARILY DRAGGED FILES
-columns = ['PATH', 'NEW_TAG']
+columns = ['PATH', 'SIZE']
 tree = ttk.Treeview(root, ondrop=drop, columns=columns, show='headings')
-tree.heading('PATH', text='Image Path')
-tree.heading('NEW_TAG', text="New Tag")
+tree.heading('PATH', text='Putanja')
+tree.heading('SIZE', text="Veličina")
 
 #NOTE: REMOVE `drag_command`.IS LOW PRIORITY, PROBABLY WONT EVER BE USED IN AN APP LIKE THIS
 def drag_command(event):
@@ -56,13 +68,16 @@ def widgets():
     # With DnD hook you just pass the command to the proper argument,
     # and tkinterDnD will take care of the rest
     # NOTE: You need a ttk widget to use these arguments
-
+    
+    #TREE LABEL
+    label_tree = ttk.Label(root, text='Prevuci slike u polje ispod',  background=MAIN_COLOR, foreground="white", font=fonts)
+    label_tree.pack(fill="both", expand=True, padx=10, pady=1)
     tree.pack(fill="both", expand=True, padx=10, pady=10)
 
     #TAG INPUT
-    name_label = ttk.Label(root, text = 'Tag Name', font=('calibre', 10, 'bold'))
-    name_label.pack(fill="both", expand=True, padx=10, pady=1)
-    name_entry = ttk.Entry(root,textvariable = copyright_value, font=('calibre', 15, 'normal'))
+    label_input = ttk.Label(root, text = 'Unesi novi tag', background=MAIN_COLOR, foreground="white", font=fonts)
+    label_input.pack(fill="both", expand=True, padx=10, pady=1)
+    name_entry = ttk.Entry(root,textvariable = copyright_value, background=MAIN_COLOR, style="BW.TLabel", justify='center', font=fonts)
     name_entry.pack(fill="both", expand=True, padx=10, pady=10)
 
     #CHECKBOX
@@ -70,17 +85,23 @@ def widgets():
     #copyright_check.pack(fill="both", expand=True, padx=10, pady=1)
 
     # Button that will call the submit function
-    sub_btn=ttk.Button(root,text = 'Save', command=submit)   
+    sub_btn=ttk.Button(root, text = 'SPASI', command=submit, style="BW.TButton", default="active")   
     sub_btn.pack(fill="both", expand=True, padx=10, pady=10)
+
+def filter_images(data):
+    image_files = []
+    for file in data: #C:/Users/Administrator/Desktop/nove_slike/15.jpeg
+            for index in range(len(EXTENSIONS) - 1):     
+                try:
+                    if(file[file.rindex("."):len(file)].__eq__(EXTENSIONS[index])): #.jpeg == jpg, jpeg, png?
+                        image_files.append(file)
+                except ValueError:
+                    print(file + ' ==> is not an image')           
+    return image_files
 
 def load_dragged_images(imgs): 
     folder_path = imgs[0]
     pth = folder_path[0: folder_path.rindex("/")]
-    img_filename = imgs[0]
-    #img_path = f'{folder_path}/{img_filename}'
-
-    #for x in imgs:
-        #print(x)
 
     global images
     images = imgs
@@ -112,18 +133,23 @@ def submit():
                 img = Image(img_file)
                 img.copyright = copyright_value.get() #Set copyright value with `exif` class
         
-            with open(f'{path}/updated{image[image.rindex("/") : len(image)]}', 'wb') as new_image_file: #When copyright is set, 
+            with open(f'{path}/{EXTERNAL_PATH}{image[image.rindex("/") : len(image)]}', 'wb') as new_image_file: #When copyright is set, 
                                                                                                          #we place the current file into newly created dir
                 new_image_file.write(img.get_file())
 
             int_var.set(progress) 
             progress += 1 #Increment progress
+            pb_instance.destroy()
 
     images_value.set('')  
     copyright_value.set('') #Reset copyright input
 
-    for img in images: #Populate Treeview `NEW_TAG` row
-        tree.set('', 'NEW_TAG', value = copyright_value.get() if copyright_value.get() else "__EMPTY__")
+    tree.delete(*tree.get_children())
+
+    
+
+    for img in images: #Populate Treeview `SIZE` row
+        tree.set('', 'SIZE', value = copyright_value.get() if copyright_value.get() else "__EMPTY__")
 
 #INITIALIZE WIDGETS
 widgets()
