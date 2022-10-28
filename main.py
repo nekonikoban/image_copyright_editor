@@ -3,10 +3,14 @@ import tkinter as tk
 from tkinter import ttk
 import tkinterDnD  #DRAG & DROP
 from exif import Image #METADATA READER / WRITER
+from playsound import playsound #SFOR PLAYING SOUND WHEN TASK FINISHES (this library has one function called `playesound`)
 
 MAIN_COLOR = "#2D2D2D"
 EXTERNAL_PATH = "/updated"
 EXTENSIONS = ['.jpg', '.jpeg', '.png', '.ttif']
+SOUND_FINISHED = "finished.mp3"
+
+#NOTE: Every file dependency is store on a system root dir
 
 # You have to use the tkinterDnD.Tk object for super easy initialization,
 # and to be able to use the main window as a dnd widget
@@ -146,10 +150,15 @@ def submit():
 
     tree.delete(*tree.get_children())
 
-    
+    play_sound_on_finish()    
 
     for img in images: #Populate Treeview `SIZE` row
         tree.set('', 'SIZE', value = copyright_value.get() if copyright_value.get() else "__EMPTY__")
+
+#PLAYS SOUND WEHN TASK IS COMPLETED
+#NOTE: Since `tkinter` is single threaded, sound will play for x seconds, and only when it finishes the frame will be cleard as intended.
+def play_sound_on_finish():
+    playsound(f'C:/{SOUND_FINISHED}')
 
 #INITIALIZE WIDGETS
 widgets()
