@@ -55,7 +55,9 @@ def drop(event):
 columns = ['PATH', 'SIZE']
 tree = ttk.Treeview(root, ondrop=drop, columns=columns, show='headings')
 tree.heading('PATH', text='Putanja')
+tree.column("PATH", minwidth=200, width=250)
 tree.heading('SIZE', text="Veličina")
+tree.column("SIZE", minwidth=0, width=5)
 
 #NOTE: REMOVE `drag_command`.IS LOW PRIORITY, PROBABLY WONT EVER BE USED IN AN APP LIKE THIS
 def drag_command(event):
@@ -66,6 +68,15 @@ def drag_command(event):
 
 #DEFINING WIDGETS USED IN THE FRAME
 def widgets(): 
+    #MENU
+    #menubar = tk.Menu(root)
+    #root.config(menu=menubar)
+
+    # add the File menu to the menubar
+    #menubar.add_cascade(
+    #    label="About",
+    #)
+
     # Without DnD hook you need to register the widget for every purpose,
     # and bind it to the function you want to call
 
