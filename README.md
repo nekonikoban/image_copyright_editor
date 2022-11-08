@@ -14,7 +14,7 @@ Packages used
 - `exif` for image metadata reading & writing
 
 TODO:
-- Convert png to jpg if any while running the task
+- Convert png to jpg if any while running the task since `copyright` is not existent in this image extension ( Pillow open / save )
 
 
 NOTE: 
