@@ -3,12 +3,11 @@ import tkinter as tk
 from tkinter import ttk
 import tkinterDnD  #DRAG & DROP
 from exif import Image #METADATA READER / WRITER
-from playsound import playsound #SFOR PLAYING SOUND WHEN TASK FINISHES (this library has one function called `playesound`)
+#rom PIL import Image as pillowImage
 
 MAIN_COLOR = "#2D2D2D"
 EXTERNAL_PATH = "/updated"
 EXTENSIONS = ['.jpg', '.jpeg', '.png', '.ttif']
-SOUND_FINISHED = "finished.mp3"
 
 #NOTE: Every file dependency is store on a system root dir
 
@@ -123,16 +122,24 @@ def load_dragged_images(imgs):
     global path
     path = pth
 
+def convert_to_jpg(path):
+    return
+    #Open original image (png)
+    #image = pillowImage.open(path)
+    #Save converted image  
+    #image.save(path[ 0 : path.rindex(".") ] + ".jpg")
+    #Edit copyright and save to `updated` dir
+
 #SAVE EDITED METADATA FILES TO A NEW DIRECTORY    
 def submit():
     #If images list is empty, break
     if not images:
         return
 
-    tmp_path = path + "/updated" #Define temporary path for newly crated images to be placed into
+    current_path = path + "/updated" #Define temporary path for newly crated images to be placed into
 
-    if not os.path.isdir(tmp_path): #If the previous path does not exists, create one, otherwise run the loop
-        os.makedirs(tmp_path)
+    if not os.path.isdir(current_path): #If the previous path does not exists, create one, otherwise run the loop
+        os.makedirs(current_path)
         submit() #Now that new dir has been created we do recursion 
     else: 
         int_var = tk.IntVar() #Inti progress bar
@@ -142,11 +149,17 @@ def submit():
         progress = 0
 
         for image in images: #Loop throughout `images` list
-            tmp_path = f'{image}'
+            current_path = f'{image}'
 
-            with open(tmp_path, 'rb') as img_file: #Get binary of the current file / image
+            with open(current_path, 'rb') as img_file: #Get binary of the current file / image
+
                 img = Image(img_file)
-                img.copyright = copyright_value.get() #Set copyright value with `exif` class
+                #TODO: If image doesnt have exif convert it (_has_exif returns false always on both jpg and png)
+                if not img._has_exif:
+                    print("File has no exif")
+                    #convert_image_to_jpg(current_path)
+
+                img.copyright = copyright_value.get() #Set copyright value 
         
             with open(f'{path}/{EXTERNAL_PATH}{image[image.rindex("/") : len(image)]}', 'wb') as new_image_file: #When copyright is set, 
                                                                                                          #we place the current file into newly created dir
@@ -156,26 +169,20 @@ def submit():
             progress += 1 #Increment progress
             pb_instance.destroy()
 
-    images_value.set('')  
+    images_value.set('') 
     copyright_value.set('') #Reset copyright input
 
-    tree.delete(*tree.get_children())
+    tree.delete(*tree.get_children()) #Reset tree data
 
-    play_sound_on_finish()    
+    show_message_on_finish()
 
     for img in images: #Populate Treeview `SIZE` row
         tree.set('', 'SIZE', value = copyright_value.get() if copyright_value.get() else "__EMPTY__")
 
-#PLAYS SOUND WEHN TASK IS COMPLETED
-#NOTE: Since `tkinter` is single threaded, sound will play for x seconds, and only when it finishes the frame will be cleard as intended.
-def play_sound_on_finish():
-    playsound(f'C:/{SOUND_FINISHED}')
+#SHOW MESSAGE ON FINISH
+def show_message_on_finish():
+    print("Task finished succesfuly!")
 
-#INITIALIZE WIDGETS
+#INITIALIZE WIDGETS AND RUN
 widgets()
-#RUN `Tk`` LOOP
 root.mainloop()
-
-#NOTE: THE APP STOPS RESPONDING WHILE RUN ON AN DIFFERENT WINDOWS MACHINE
-#POSSIBLE SOLUTION: 
-# - Installing / Updating C++ Redistributable
