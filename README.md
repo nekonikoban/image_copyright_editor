@@ -14,13 +14,7 @@ Packages used
 - `exif` for image metadata reading & writing
 
 TODO:
-1. Restrict files to images only [UPDATED]
-2. Show updated images on the frame
-3. Reduce unnecessary imports [FIXED]
-4. Unusual UAC behaviour while running on earlier windows builds (Visual Redistribute C++ may be required?) [FIXED]
-
-
-
+- Convert png to jpg if any while running the task
 
 
 NOTE: 
