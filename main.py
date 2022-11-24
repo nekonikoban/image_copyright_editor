@@ -1,10 +1,14 @@
+from inspect import ClassFoundException
 import os #READING / WRITING DIRS
 import tkinter as tk
 from tkinter import ttk
 import tkinterDnD  #DRAG & DROP
 from exif import Image #METADATA READER / WRITER
-#rom PIL import Image as pillowImage
+from playsound import playsound
+import threading
+#from PIL import Image as pillowImage
 
+SOUND_SUCCESS = "C:/finished.mp3"
 MAIN_COLOR = "#2D2D2D"
 EXTERNAL_PATH = "/updated"
 EXTENSIONS = ['.jpg', '.jpeg', '.png', '.ttif']
@@ -15,7 +19,7 @@ EXTENSIONS = ['.jpg', '.jpeg', '.png', '.ttif']
 # and to be able to use the main window as a dnd widget
 root = tkinterDnD.Tk()  
 root.title("Image COPYRIGHT Editor  __by AylinDesign®") #Trackbar title
-root.iconbitmap("C:/favicon.ico") #Trackbar / Taskbar icon NOTE: copy to C root for it to work
+#root.iconbitmap("C:/favicon.ico") #Trackbar / Taskbar icon NOTE: copy to C root for it to work
 root.geometry(f"{750}x{450}") #Frame with static width and height
 root.resizable(False, False) #Frame unresizable by both width and height
 root.attributes('-topmost', True) #Frame always on top
@@ -40,6 +44,13 @@ copyright_value.set('')
 #GLOBAL VARIABLES
 images = [] #HOLDS DROPPED FILES PATHS
 path = "" #ABSOLUTE COMMON PATH FOR DROPPED FILES
+
+#PLAY SOUND ON FINISH
+def play_sound_on_finish():
+    try:
+        playsound(SOUND_SUCCESS)
+    except TypeError:
+        print("TypeError occured, could not play sound {}".format(SOUND_SUCCESS))
 
 #DRAG & DROP EVENT, LIST ALL FILES PATHS ON THE TREEVIEW WHEN DRAGGED OVER
 def drop(event):
@@ -134,6 +145,7 @@ def convert_to_jpg(path):
 def submit():
     #If images list is empty, break
     if not images:
+        print("Images list is empty, exiting process")
         return
 
     current_path = path + "/updated" #Define temporary path for newly crated images to be placed into
@@ -154,7 +166,8 @@ def submit():
             with open(current_path, 'rb') as img_file: #Get binary of the current file / image
 
                 img = Image(img_file)
-                #TODO: If image doesnt have exif convert it (_has_exif returns false always on both jpg and png)
+                #TODO: If image doesnt have exif store to tmporary array and convert on second cycle with func convert_to_jpg
+                #NOTE: (_has_exif returns false always on both jpg and png)
                 if not img._has_exif:
                     print("File has no exif")
                     #convert_image_to_jpg(current_path)
@@ -173,6 +186,11 @@ def submit():
     copyright_value.set('') #Reset copyright input
 
     tree.delete(*tree.get_children()) #Reset tree data
+
+    try: #Try to play simultaneously sound while processing images with thread
+        threading.Thread(target=play_sound_on_finish).start()
+    except ClassFoundException: 
+        print("Threading Error while trying to play sound")
 
     show_message_on_finish()
 
